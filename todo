@@ -1,0 +1,17 @@
+# TODO
+
+* Review papers on polarization for document classification
+  * <https://www.pewresearch.org/politics/2014/06/12/political-polarization-in-the-american-public/>
+  * thought: if we compare words polarized subreddits, we cannot assess if these subreddits more polarized
+  * we can use
+    * 1) terms that are considered polarized (Hofmannm, Ddemsky)
+    * 2) terms characterizing two poles (tf-idf, semaxis, partisan tokens (Ddemsky))
+* Find events that can cause polarization
+  * <https://www.history.com/news/2010s-decade-major-events>
+  * Black Lives Matter - started in 2013
+  * Mass Shootings - Las Vegas 2017, Orlando nightclub 2016
+  * 2016 election
+  * MeToo - 2017
+  * Brexit?
+
+* Find subreddits that are especially polarized
