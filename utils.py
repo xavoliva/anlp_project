@@ -24,11 +24,14 @@ def load_data(data_path, year, tokenize=False, frac=None):
     files = get_files_from_folder(f"{data_path}/{year}")
     dfs = []
     print("Loading data...")
-    # TODO: ALL FILES
+
     for f in files:
+        try:
             print(f)
             df = pd.read_csv(f)
             dfs.append(df)
+        except OSError as e:
+            print("\t", e)
             
     data = pd.concat(dfs)
     
