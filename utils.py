@@ -7,11 +7,11 @@ from dask.utils import parse_timedelta
 import nltk
 from nltk.tokenize import word_tokenize
 # import pandas as pd
-import dask.dataframe as pd
+import dask.dataframe as dd
 
 from constants import COLUMNS
 
-sno = nltk.stem.SnowballStemmer('english')
+sno = nltk.stem.SnowballStemmer("english")
 
 
 def get_files_from_folder(folder_name, compression="bz2"):
@@ -27,13 +27,14 @@ def get_files_from_folder(folder_name, compression="bz2"):
 def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
     files = get_files_from_folder(
         f"{data_path}/{year}", compression=comp)
-    dfs = []
-    print("Loading data...")
+
+    print(f"Loading data of {year}...")
+
     if dev:
         files = files[:1]
 
     if comp == "bz2":
-        data = pd.read_csv(files,
+        data = dd.read_csv(files,
                            blocksize=None,  # 500e6 = 500MB
                            usecols=COLUMNS,
                            dtype={
@@ -43,11 +44,14 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
                            })
 
         # keep only day
-        data['created_utc'] = pd.to_datetime(data['created_utc'], unit='s').dt.date
+        data["created_utc"] = dd.to_datetime(
+            data["created_utc"], unit="s").dt.date
+
     elif comp == "parquet":
-        data = pd.read_parquet(files,
-                               #  blocksize=500e6,  # 500e6 = 500MB
-                               )
+        data = dd.read_parquet(files,
+                               gather_statistics=True,
+                               engine="pyarrow",
+                               chunksize="200MB")
     else:
         raise NotImplementedError("Compression not allowed.")
 
@@ -56,7 +60,7 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
         with open("data/stopwords.txt", "r") as f:
             stopwords = f.read().splitlines()
         tic = time.perf_counter()
-        data['tokens'] = data['body'].apply(
+        data["tokens"] = data["body"].apply(
             lambda x: get_tokens(x, stopwords, stem=True))
         toc = time.perf_counter()
 
@@ -69,9 +73,9 @@ def get_tokens(text, stopwords, stem=True):
     # lower case
     text = text.lower()
     # eliminate urls
-    text = re.sub(r'http\S*|\S*\.com\S*|\S*www\S*', ' ', text)
+    text = re.sub(r"http\S*|\S*\.com\S*|\S*www\S*", " ", text)
     # replace all whitespace with a single space
-    text = re.sub(r'\s+', ' ', text)
+    text = re.sub(r"\s+", " ", text)
     # strip off spaces on either end
     text = text.strip()
     tokens = word_tokenize(text)
