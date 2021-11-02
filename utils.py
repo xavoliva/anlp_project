@@ -21,52 +21,35 @@ def get_files_from_folder(folder_name, compression="bz2"):
         if file.endswith(f".{compression}"):
             files.append(f"{folder_name}/{file}")
 
-    return files
+    return sorted(files)
 
 
-def load_data(data_path, year, tokenize=False, frac=None, dev=False):
-    files = get_files_from_folder(f"{data_path}/{year}")
+def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
+    files = get_files_from_folder(
+        f"{data_path}/{year}", compression=comp)
     dfs = []
     print("Loading data...")
     if dev:
         files = files[:1]
-    for f in files:
-        try:
-            print(f)
-            if dev:
-                df = pd.read_csv(f,
-                                 blocksize=None,
-                                 usecols=COLUMNS,
-                                 dtype={
-                                     "ups": "int16",
-                                     "downs": "int16",
-                                     "subreddit": "string[pyarrow]",
-                                     "author": "string[pyarrow]",
-                                     "body": "string[pyarrow]"
-                                 },
-                                 nrows=1000)
-            else:
-                df = pd.read_csv(f,
-                                 blocksize=None,
-                                 usecols=COLUMNS,
-                                 dtype={
-                                     "ups": "int16",
-                                     "downs": "int16",
-                                     "subreddit": "string[pyarrow]",
-                                     "author": "string[pyarrow]",
-                                     "body": "string[pyarrow]",
-                                 })
-            dfs.append(df)
-        except OSError as e:
-            print("\t", e)
 
-    data = pd.concat(dfs)
+    if comp == "bz2":
+        data = pd.read_csv(files,
+                           blocksize=None,  # 500e6 = 500MB
+                           usecols=COLUMNS,
+                           dtype={
+                               "subreddit": "string[pyarrow]",
+                               "author": "string[pyarrow]",
+                               "body": "string[pyarrow]",
+                           })
 
-    if frac:
-        data = data.sample(frac=frac)
-
-    # keep only day
-    data['created_utc'] = pd.to_datetime(data['created_utc'], unit='s').dt.date
+        # keep only day
+        data['created_utc'] = pd.to_datetime(data['created_utc'], unit='s').dt.date
+    elif comp == "parquet":
+        data = pd.read_parquet(files,
+                               #  blocksize=500e6,  # 500e6 = 500MB
+                               )
+    else:
+        raise NotImplementedError("Compression not allowed.")
 
     if tokenize:
         print(f"Tokenizing body... (nr_rows = {len(data)})")

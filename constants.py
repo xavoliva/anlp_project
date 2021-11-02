@@ -4,7 +4,7 @@ ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_tex
                'created_utc', 'distinguished', 'downs', 'edited', 'gilded', 'id', 'link_id', 'name', 'parent_id',
                'removal_reason', 'retrieved_on', 'score', 'score_hidden', 'subreddit', 'subreddit_id', 'ups']
 
-COLUMNS = ["author", "body", "subreddit", "subreddit_id", "created_utc", "ups", "downs"]
+COLUMNS = ["author", "body", "subreddit", "subreddit_id", "created_utc"]
 
 # TODO: fill with partisan subreddits
 DEM_SUBREDDITS = ["democrats"]
