@@ -8,13 +8,14 @@ import nltk
 from nltk.tokenize import word_tokenize
 # import pandas as pd
 import dask.dataframe as dd
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 from constants import COLUMNS
 
 sno = nltk.stem.SnowballStemmer("english")
 
 
-def get_files_from_folder(folder_name, compression="bz2"):
+def get_files_from_folder(folder_name: str, compression: str = "bz2") -> list[str]:
     # return all files as a list
     files = []
     for file in os.listdir(folder_name):
@@ -49,9 +50,8 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
 
     elif comp == "parquet":
         data = dd.read_parquet(files,
-                               gather_statistics=True,
                                engine="pyarrow",
-                               chunksize="200MB")
+                               gather_statistics=True)
     else:
         raise NotImplementedError("Compression not allowed.")
 
@@ -61,15 +61,16 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
             stopwords = f.read().splitlines()
         tic = time.perf_counter()
         data["tokens"] = data["body"].apply(
-            lambda x: get_tokens(x, stopwords, stem=True))
+            lambda x: tokenize_post(x, stopwords, stem=True))
         toc = time.perf_counter()
 
         print(f"\tTokenized dataframe in {toc - tic:0.4f} seconds")
-
+    if dev:
+        return data.sample(frac=0.01)
     return data
 
 
-def get_tokens(text, stopwords, stem=True):
+def process_post(text: str) -> str:
     # lower case
     text = text.lower()
     # eliminate urls
@@ -78,7 +79,14 @@ def get_tokens(text, stopwords, stem=True):
     text = re.sub(r"\s+", " ", text)
     # strip off spaces on either end
     text = text.strip()
-    tokens = word_tokenize(text)
+
+    return text
+
+
+def tokenize_post(text: str, stopwords: list[str], stem: bool = True) -> list[str]:
+    p_text = process_post(text)
+
+    tokens = word_tokenize(p_text)
     # filter punctuation
     tokens = filter(lambda token: token not in string.punctuation, tokens)
     # filter stopwords
@@ -88,3 +96,12 @@ def get_tokens(text, stopwords, stem=True):
         tokens = [sno.stem(t) for t in tokens]
 
     return tokens
+
+
+# Create a SentimentIntensityAnalyzer object.
+sia = SentimentIntensityAnalyzer()
+
+
+def get_sentiment_score(post: str) -> float:
+    post = process_post(post)
+    return sia.polarity_scores(post)['compound']
