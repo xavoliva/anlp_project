@@ -57,8 +57,7 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
 
     if tokenize:
         print(f"Tokenizing body... (nr_rows = {len(data)})")
-        with open("data/stopwords.txt", "r") as f:
-            stopwords = f.read().splitlines()
+        stopwords = txt_to_list("data/stopwords.txt")
         tic = time.perf_counter()
         data["tokens"] = data["body"].apply(
             lambda x: tokenize_post(x, stopwords, stem=True))
@@ -68,6 +67,13 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
     if dev:
         return data.sample(frac=0.01)
     return data
+
+
+def txt_to_list(data_path: str) -> list[str]:
+    with open(data_path, "r") as f:
+        stopwords = f.read().splitlines()
+
+        return stopwords
 
 
 def process_post(text: str) -> str:
