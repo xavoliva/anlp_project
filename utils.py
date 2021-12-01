@@ -2,7 +2,6 @@ import os
 import string
 import re
 import time
-from dask.utils import parse_timedelta
 
 import nltk
 from nltk.tokenize import word_tokenize
@@ -15,7 +14,7 @@ from constants import COLUMNS
 sno = nltk.stem.SnowballStemmer("english")
 
 
-def get_files_from_folder(folder_name: str, compression: str = "bz2") -> list[str]:
+def get_files_from_folder(folder_name, compression="bz2"):
     # return all files as a list
     files = []
     for file in os.listdir(folder_name):
@@ -39,9 +38,9 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
                            blocksize=None,  # 500e6 = 500MB
                            usecols=COLUMNS,
                            dtype={
-                               "subreddit": "string[pyarrow]",
-                               "author": "string[pyarrow]",
-                               "body": "string[pyarrow]",
+                               "subreddit": "string",
+                               "author": "string",
+                               "body": "string",
                            })
 
         # keep only day
@@ -57,10 +56,10 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
 
     if tokenize:
         print(f"Tokenizing body... (nr_rows = {len(data)})")
-        stopwords = txt_to_list("data/stopwords.txt")
+
         tic = time.perf_counter()
         data["tokens"] = data["body"].apply(
-            lambda x: tokenize_post(x, stopwords, stem=True))
+            lambda x: tokenize_post(x, STOPWORDS, stem=True))
         toc = time.perf_counter()
 
         print(f"\tTokenized dataframe in {toc - tic:0.4f} seconds")
@@ -69,14 +68,17 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
     return data
 
 
-def txt_to_list(data_path: str) -> list[str]:
+def txt_to_list(data_path):
     with open(data_path, "r") as f:
         stopwords = f.read().splitlines()
 
         return stopwords
 
 
-def process_post(text: str) -> str:
+STOPWORDS = txt_to_list("data/stopwords.txt")
+
+
+def process_post(text):
     # lower case
     text = text.lower()
     # eliminate urls
@@ -89,7 +91,7 @@ def process_post(text: str) -> str:
     return text
 
 
-def tokenize_post(text: str, stopwords: list[str], stem: bool = True) -> list[str]:
+def tokenize_post(text, stopwords, stem=True):
     p_text = process_post(text)
 
     tokens = word_tokenize(p_text)
@@ -108,6 +110,6 @@ def tokenize_post(text: str, stopwords: list[str], stem: bool = True) -> list[st
 sia = SentimentIntensityAnalyzer()
 
 
-def get_sentiment_score(post: str) -> float:
+def get_sentiment_score(post):
     post = process_post(post)
     return sia.polarity_scores(post)['compound']

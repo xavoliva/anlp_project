@@ -12,9 +12,9 @@ if __name__ == "__main__":
             df = pd.read_csv(f,
                             usecols=COLUMNS,
                             dtype={
-                                "subreddit": "string[pyarrow]",
-                                "author": "string[pyarrow]",
-                                "body": "string[pyarrow]",
+                                "subreddit": "string",
+                                "author": "string",
+                                "body": "string",
                             })
             df['created_utc'] = pd.to_datetime(df['created_utc'], unit='s').dt.date
             df.to_parquet(f"{f[:-4]}.parquet")
