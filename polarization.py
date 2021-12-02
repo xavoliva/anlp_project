@@ -43,7 +43,8 @@ def chi_square(left_t, right_t, left_not_t, right_not_t, left_no, right_no):
     all_t = left_t + right_t
     all_not_t = no_users - all_t + 4
     chi_enum = no_users * (left_t * right_not_t - left_not_t * right_t) ** 2
-    chi_denom = all_t * all_not_t * (left_t + left_not_t) * (right_t + right_not_t)
+    chi_denom = all_t * all_not_t * \
+        (left_t + left_not_t) * (right_t + right_not_t)
     return (chi_enum / chi_denom).transpose()[:, np.newaxis]
 
 
@@ -52,8 +53,9 @@ def calculate_polarization(left_counts, right_counts, measure="posterior", leave
     right_user_total = right_counts.sum(axis=1)
 
     left_user_distr = (sp.diags(1 / left_user_total.A.ravel())
-                      ).dot(left_counts)  # get row-wise distributions
-    right_user_distr = (sp.diags(1 / right_user_total.A.ravel())).dot(right_counts)
+                       ).dot(left_counts)  # get row-wise distributions
+    right_user_distr = (
+        sp.diags(1 / right_user_total.A.ravel())).dot(right_counts)
     left_no = left_counts.shape[0]
     right_no = right_counts.shape[0]
     assert (set(left_user_total.nonzero()[0]) == set(

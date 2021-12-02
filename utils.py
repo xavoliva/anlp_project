@@ -9,9 +9,17 @@ from nltk.tokenize import word_tokenize
 import dask.dataframe as dd
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-from constants import COLUMNS
+from constants import COLUMNS, INPUT_DIR
 
 sno = nltk.stem.SnowballStemmer("english")
+
+def txt_to_list(data_path):
+    with open(data_path, "r") as f:
+        data = f.read().splitlines()
+
+        return data
+
+STOPWORDS = txt_to_list(f"{INPUT_DIR}/stopwords.txt")
 
 
 def get_files_from_folder(folder_name, compression="bz2"):
@@ -68,16 +76,6 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
     return data
 
 
-def txt_to_list(data_path):
-    with open(data_path, "r") as f:
-        stopwords = f.read().splitlines()
-
-        return stopwords
-
-
-STOPWORDS = txt_to_list("data/stopwords.txt")
-
-
 def process_post(text):
     # lower case
     text = text.lower()
@@ -91,14 +89,15 @@ def process_post(text):
     return text
 
 
-def tokenize_post(text, stopwords, stem=True):
+def tokenize_post(text, keep_stopwords=False, stem=True):
     p_text = process_post(text)
 
     tokens = word_tokenize(p_text)
     # filter punctuation
     tokens = filter(lambda token: token not in string.punctuation, tokens)
-    # filter stopwords
-    tokens = [t for t in tokens if t not in stopwords]
+    if not keep_stopwords:
+        # filter stopwords
+        tokens = [t for t in tokens if t not in STOPWORDS]
     # stem words
     if stem:
         tokens = [sno.stem(t) for t in tokens]
