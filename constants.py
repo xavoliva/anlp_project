@@ -7,7 +7,7 @@ ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_tex
 COLUMNS = ["author", "body", "subreddit", "subreddit_id", "created_utc"]
 
 # TODO: fill with partisan subreddits
-DEM_SUBREDDITS = [
+DEM_SUBREDDITS = set([
     "democrats",
     "AOC",
     "Anarchism",
@@ -17,9 +17,9 @@ DEM_SUBREDDITS = [
     "DemocraticSocialism",
     "socialism",
     "Socialism_101",
-]
+])
 
-REP_SUBREDDITS = [
+REP_SUBREDDITS = set([
     "republicans",
     "Anarcho_Capitalism",
     "Conservative",
@@ -33,6 +33,6 @@ REP_SUBREDDITS = [
     "antifapassdenied",
     "Capitalism",
     "Libertarian"
-]
+])
 
 CEN_SUBREDDITS = ["worldnews", "politics", "news"]
