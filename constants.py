@@ -1,4 +1,6 @@
 DATA_PATH = "data"
+INPUT_DIR = "data/input"
+EVENTS_DIR = "data/events"
 
 ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_text', 'body', 'controversiality',
                'created_utc', 'distinguished', 'downs', 'edited', 'gilded', 'id', 'link_id', 'name', 'parent_id',
