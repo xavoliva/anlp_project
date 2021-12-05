@@ -1,6 +1,12 @@
+import random
+
+RNG = random.Random()
+RNG.seed(42)
+
 DATA_PATH = "data"
 INPUT_DIR = "data/input"
 EVENTS_DIR = "data/events"
+OUTPUT_DIR = "DATA/output"
 
 ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_text', 'body', 'controversiality',
                'created_utc', 'distinguished', 'downs', 'edited', 'gilded', 'id', 'link_id', 'name', 'parent_id',
@@ -38,3 +44,5 @@ REP_SUBREDDITS = set([
 ])
 
 CEN_SUBREDDITS = ["worldnews", "politics", "news"]
+
+MIN_OCCURENCE_FOR_VOCAB = 50
