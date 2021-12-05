@@ -178,7 +178,7 @@ def get_user_token_counts(posts, vocab):
     return sp.csr_matrix((data, (col_idx, row_idx)), shape=(len(users), len(vocab)))
 
 
-def get_values(event, data, token_partisanship_measure='posterior', default_score=0.5):
+def get_polarization(event, data, token_partisanship_measure='posterior', default_score=0.5):
     """
     Measure polarization.
     event: name of the event
@@ -237,10 +237,13 @@ def get_values(event, data, token_partisanship_measure='posterior', default_scor
 
     left_nonzero = set(left_counts.nonzero()[0])
     right_nonzero = set(right_counts.nonzero()[0])
+
+    # filter users who did not use words from vocab
     left_counts = left_counts[np.array([(i in left_nonzero) for i in range(
-        left_counts.shape[0])]), :]  # filter users who did not use words from vocab
+        left_counts.shape[0])]), :]
     right_counts = right_counts[np.array(
         [(i in right_nonzero) for i in range(right_counts.shape[0])]), :]
+
     del left_nonzero
     del right_nonzero
     gc.collect()
@@ -267,3 +270,23 @@ def get_values(event, data, token_partisanship_measure='posterior', default_scor
     gc.collect()
 
     return actual_val, random_val, left_user_len + right_user_len
+
+
+def split_by_day(data):
+    return [(v, int(k.replace("-", ""))) for k, v in data.groupby("time")]
+
+
+def get_polarization_by_day(event, data):
+    method = "posterior"
+
+    data_days = split_by_day(data)
+
+    nr_splits = len(data_days)
+
+    # TODO: CHANGE
+    pol = np.zeros((nr_splits, 4))
+    for i, (d, day) in enumerate(data_days):
+        pol[i, :3] = get_polarization(event, d, method)
+        pol[i, 3] = day
+
+    return pol
