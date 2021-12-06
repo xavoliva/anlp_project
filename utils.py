@@ -7,17 +7,20 @@ import nltk
 from nltk.tokenize import word_tokenize
 # import pandas as pd
 import dask.dataframe as dd
+import pandas as pd
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-from constants import COLUMNS, INPUT_DIR
+from constants import COLUMNS, EVENTS_DIR, INPUT_DIR
 
 sno = nltk.stem.LancasterStemmer()#("english")
+
 
 def txt_to_list(data_path):
     with open(data_path, "r") as f:
         data = f.read().splitlines()
 
         return data
+
 
 STOPWORDS = txt_to_list(f"{INPUT_DIR}/stopwords.txt")
 
@@ -30,6 +33,10 @@ def get_files_from_folder(folder_name, compression="bz2"):
             files.append(f"{folder_name}/{file}")
 
     return sorted(files)
+
+
+def load_event(event):
+    return pd.read_csv(f"{EVENTS_DIR}/{event}.csv", usecols=["author", "post", "time", "politics"])
 
 
 def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):

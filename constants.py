@@ -1,6 +1,15 @@
+import random
+
+RNG = random.Random()
+RNG.seed(42)
+
 DATA_PATH = "data"
-INPUT_DIR = "data/input"
-EVENTS_DIR = "data/events"
+INPUT_DIR = f"{DATA_PATH}/input"
+EVENTS_DIR = f"{DATA_PATH}/events"
+OUTPUT_DIR = f"{DATA_PATH}/output"
+FIGURES_DIR = f"{DATA_PATH}/figures"
+
+EVENTS = ["brexit"]
 
 ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_text', 'body', 'controversiality',
                'created_utc', 'distinguished', 'downs', 'edited', 'gilded', 'id', 'link_id', 'name', 'parent_id',
@@ -8,7 +17,6 @@ ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_tex
 
 COLUMNS = ["author", "body", "subreddit", "subreddit_id", "created_utc"]
 
-# TODO: fill with partisan subreddits
 DEM_SUBREDDITS = set([
     "democrats",
     "AOC",
@@ -38,3 +46,5 @@ REP_SUBREDDITS = set([
 ])
 
 CEN_SUBREDDITS = ["worldnews", "politics", "news"]
+
+MIN_OCCURENCE_FOR_VOCAB = 50
