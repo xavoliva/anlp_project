@@ -124,7 +124,7 @@ def get_polarization(event, data, default_score=0.5):
 
     # get vocab
     vocab = {w: i for i, w in
-             enumerate(open(f"{EVENTS_DIR}/{event}_vocab.txt", "r").read().splitlines())}
+             enumerate(open(f"{EVENTS_DIR}/{event}_tokens.txt", "r").read().splitlines())}
 
     left_counts = get_author_token_counts(left_posts, vocab)
     right_counts = get_author_token_counts(right_posts, vocab)

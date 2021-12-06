@@ -16,7 +16,6 @@ ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_tex
 
 COLUMNS = ["author", "body", "subreddit", "subreddit_id", "created_utc"]
 
-# TODO: fill with partisan subreddits
 DEM_SUBREDDITS = set([
     "democrats",
     "AOC",

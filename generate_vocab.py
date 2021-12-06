@@ -71,5 +71,5 @@ def build_event_vocabs(events):
 
         vocab = build_vocab(corpus)
         print(len(vocab))
-        with open(f"{EVENTS_DIR}/{e}/{e}_vocab.txt", 'w') as f:
+        with open(f"{EVENTS_DIR}/{e}/{e}_tokens.txt", 'w') as f:
             f.write('\n'.join(vocab))
