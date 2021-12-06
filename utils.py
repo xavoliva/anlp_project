@@ -11,7 +11,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 from constants import COLUMNS, INPUT_DIR
 
-sno = nltk.stem.SnowballStemmer("english")
+sno = nltk.stem.LancasterStemmer()#("english")
 
 def txt_to_list(data_path):
     with open(data_path, "r") as f:
@@ -67,7 +67,7 @@ def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
 
         tic = time.perf_counter()
         data["tokens"] = data["body"].apply(
-            lambda x: tokenize_post(x, STOPWORDS, stem=True))
+            lambda x: tokenize_post(x, STOPWORDS, stemmer=True))
         toc = time.perf_counter()
 
         print(f"\tTokenized dataframe in {toc - tic:0.4f} seconds")
@@ -89,7 +89,7 @@ def process_post(text):
     return text
 
 
-def tokenize_post(text, keep_stopwords=False, stem=True):
+def tokenize_post(text, keep_stopwords=False, stemmer=True):
     p_text = process_post(text)
 
     tokens = word_tokenize(p_text)
@@ -99,8 +99,8 @@ def tokenize_post(text, keep_stopwords=False, stem=True):
         # filter stopwords
         tokens = [t for t in tokens if t not in STOPWORDS]
     # stem words
-    if stem:
-        tokens = [sno.stem(t) for t in tokens]
+    if stemmer:
+        tokens = [sno.stem(t.lower()) for t in tokens]
 
     return tokens
 
