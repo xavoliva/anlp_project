@@ -4,17 +4,13 @@ from collections import Counter
 import pandas as pd
 
 from utils import tokenize_post
-from constants import EVENTS_DIR, MIN_OCCURENCE_FOR_VOCAB
-
-# event names
-events = ["brexit"]
+from constants import EVENTS_DIR, MIN_OCCURENCE_FOR_VOCAB, EVENTS
 
 
 def get_all_vocabs(seed_val):
     vocabs = []
-    for e in events:
-        # TODO
-        data = pd.read_csv(f"{EVENTS_DIR}/{e}/{e}.csv",
+    for e in EVENTS:
+        data = pd.read_csv(f"{EVENTS_DIR}/{e}.csv",
                            usecols=['post'])
 
         # print(e, len(data))
@@ -22,7 +18,7 @@ def get_all_vocabs(seed_val):
         # this has to be done to eliminate words that are too specific to a particular event
         data = data.sample(min(len(data), 10000), random_state=seed_val)
         word_counts = Counter(tokenize_post(
-            ' '.join(data['post']), keep_stopwords=True))
+            " ".join(data["post"]), keep_stopwords=True))
         vocab = []
         for k, v in word_counts.items():
             if v >= 10:  # keep words that occur at least 10 times
@@ -52,7 +48,7 @@ def build_vocab(corpus):
     for i in range(1, len(corpus)):
         w = corpus[i]
         prev_w = corpus[i-1]
-        uni_and_bigrams.update([' '.join([prev_w, w])])
+        uni_and_bigrams.update([" ".join([prev_w, w])])
 
     vocab = [k for k, v in sorted(
         uni_and_bigrams.items(),
@@ -62,14 +58,13 @@ def build_vocab(corpus):
     return vocab
 
 
-def build_event_vocabs(events):
-    for i, e in enumerate(events):
-        print(e)
-        data = pd.read_csv(f"{EVENTS_DIR}/{e}/{e}.csv", usecols=['post'])
+def build_event_vocab(event):
+    data = pd.read_csv(f"{EVENTS_DIR}/{event}.csv", usecols=["post"])
 
-        corpus = tokenize_post(' '.join(data['post']), keep_stopwords=False)
+    corpus = tokenize_post(
+        " ".join(data["post"]), stemmer=False, keep_stopwords=False)
 
-        vocab = build_vocab(corpus)
-        print(len(vocab))
-        with open(f"{EVENTS_DIR}/{e}/{e}_tokens.txt", 'w') as f:
-            f.write('\n'.join(vocab))
+    vocab = build_vocab(corpus)
+    print("Vocab length:", len(vocab))
+
+    return vocab

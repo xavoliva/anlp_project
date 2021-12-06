@@ -179,13 +179,13 @@ def get_polarization(event, data, default_score=0.5):
         left_counts, right_counts)
 
     all_counts = sp.vstack([left_counts, right_counts])
-
     index = np.arange(all_counts.shape[0])
     RNG.shuffle(index)
-    all_counts = all_counts[index, :]
+    shuffled_all_counts = all_counts[index, :]
 
-    random_val, _, _ = calculate_polarization(all_counts[:left_author_len, :],
-                                              all_counts[left_author_len:, :])
+    # Calculate polarization with random assignment of users
+    random_val, _, _ = calculate_polarization(shuffled_all_counts[:left_counts.shape[0], :],
+                                              shuffled_all_counts[left_counts.shape[0]:, :])
 
     return (pol_val, random_val, author_len), (left_pol_vals, right_pol_vals)
 

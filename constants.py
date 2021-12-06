@@ -3,11 +3,11 @@ import random
 RNG = random.Random()
 RNG.seed(42)
 
-DATA_PATH = "data"
-INPUT_DIR = f"{DATA_PATH}/input"
-EVENTS_DIR = f"{DATA_PATH}/events"
-OUTPUT_DIR = f"{DATA_PATH}/output"
-FIGURES_DIR = f"{DATA_PATH}/figures"
+DATA_DIR = "data"
+INPUT_DIR = f"{DATA_DIR}/input"
+EVENTS_DIR = f"{DATA_DIR}/events"
+OUTPUT_DIR = f"{DATA_DIR}/output"
+FIGURES_DIR = f"{DATA_DIR}/figures"
 
 EVENTS = ["brexit"]
 
@@ -45,6 +45,8 @@ REP_SUBREDDITS = set([
     "Libertarian"
 ])
 
+PARTISAN_SUBREDDITS = DEM_SUBREDDITS | REP_SUBREDDITS
+
 CEN_SUBREDDITS = ["worldnews", "politics", "news"]
 
-MIN_OCCURENCE_FOR_VOCAB = 50
+MIN_OCCURENCE_FOR_VOCAB = 25
