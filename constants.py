@@ -4,9 +4,10 @@ RNG = random.Random()
 RNG.seed(42)
 
 DATA_PATH = "data"
-INPUT_DIR = "data/input"
-EVENTS_DIR = "data/events"
-OUTPUT_DIR = "data/output"
+INPUT_DIR = f"{DATA_PATH}/input"
+EVENTS_DIR = f"{DATA_PATH}/events"
+OUTPUT_DIR = f"{DATA_PATH}/output"
+FIGURES_DIR = f"{DATA_PATH}/figures"
 
 EVENTS = ["brexit"]
 

@@ -1,10 +1,9 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from constants import DATA_PATH
+from constants import FIGURES_DIR
 from utils import get_sentiment_score
 
-FIGURES_PATH = "data/figures"
 sns.set(rc={"figure.figsize": (20, 6)})
 
 
@@ -18,7 +17,7 @@ def barplot_top(df, column, year, n=10):
     ax.set_ylabel("Number of comments")
     ax.set_xlabel(column)
     plt.savefig(
-        fname=f"{FIGURES_PATH}/barplot_top_{column}_{year}.pdf",
+        fname=f"{FIGURES_DIR}/barplot_top_{column}_{year}.pdf",
         bbox_inches='tight', pad_inches=0,
         format="pdf"
     )
@@ -34,7 +33,7 @@ def plot_daily_comments(df, year):
     ax.set_ylabel("Number of comments")
     ax.set_xlabel("Date")
     plt.savefig(
-        fname=f"{FIGURES_PATH}/plot_daily_comments_{year}.pdf",
+        fname=f"{FIGURES_DIR}/plot_daily_comments_{year}.pdf",
         bbox_inches='tight', pad_inches=0,
         format="pdf"
     )
@@ -54,7 +53,7 @@ def plot_daily_sentiment(df, year):
     ax.set_ylabel("Sentiment Score")
     ax.set_xlabel("Date")
     plt.savefig(
-        fname=f"{FIGURES_PATH}/plot_daily_sentiment_{year}.pdf",
+        fname=f"{FIGURES_DIR}/plot_daily_sentiment_{year}.pdf",
         bbox_inches='tight', pad_inches=0,
         format="pdf"
     )

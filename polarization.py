@@ -201,6 +201,6 @@ def get_polarization_by_day(event, data):
     for d, day in data_days:
         pol_data, _ = get_polarization(event, d)
         pol_val, random_val, author_len = pol_data
-        pol.append((pol_val, random_val, author_len, day))
+        pol.append((pol_val, random_val, author_len, pd.to_datetime(day)))
 
     return pd.DataFrame(pol, columns=["pol", "random_pol", "author_len", "time"])
