@@ -12,7 +12,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 from constants import COLUMNS, EVENTS_DIR, INPUT_DIR
 
-sno = nltk.stem.LancasterStemmer()#("english")
+sno = nltk.stem.LancasterStemmer()  # ("english")
 
 
 def txt_to_list(data_path):
@@ -36,12 +36,15 @@ def get_files_from_folder(folder_name, compression="bz2"):
 
 
 def load_event(event):
-    return pd.read_csv(f"{EVENTS_DIR}/{event}.csv", usecols=["author", "post", "time", "politics"])
+    return pd.read_csv(f"{EVENTS_DIR}/{event}.csv", usecols=["author", "body", "created_utc", "affiliation"])
 
 
-def load_data(data_path, year, tokenize=False, comp="bz2", dev=False):
+def load_data(data_path, year, months=None, tokenize=False, comp="bz2", dev=False):
     files = get_files_from_folder(
         f"{data_path}/{year}", compression=comp)
+
+    if months:
+        files = [f for f in files if int(f[-10:-8]) in months]
 
     print(f"Loading data of {year}...")
 

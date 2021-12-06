@@ -11,14 +11,14 @@ def get_all_vocabs(seed_val):
     vocabs = []
     for e in EVENTS:
         data = pd.read_csv(f"{EVENTS_DIR}/{e}.csv",
-                           usecols=['post'])
+                           usecols=['body'])
 
         # print(e, len(data))
         # sample a (quasi-)equal number of tweets from each event
         # this has to be done to eliminate words that are too specific to a particular event
         data = data.sample(min(len(data), 10000), random_state=seed_val)
         word_counts = Counter(tokenize_post(
-            " ".join(data["post"]), keep_stopwords=True))
+            " ".join(data["body"]), keep_stopwords=True))
         vocab = []
         for k, v in word_counts.items():
             if v >= 10:  # keep words that occur at least 10 times
@@ -59,10 +59,10 @@ def build_vocab(corpus):
 
 
 def build_event_vocab(event):
-    data = pd.read_csv(f"{EVENTS_DIR}/{event}.csv", usecols=["post"])
+    data = pd.read_csv(f"{EVENTS_DIR}/{event}.csv", usecols=["body"])
 
     corpus = tokenize_post(
-        " ".join(data["post"]), stemmer=False, keep_stopwords=False)
+        " ".join(data["body"]), stemmer=False, keep_stopwords=False)
 
     vocab = build_vocab(corpus)
     print("Vocab length:", len(vocab))

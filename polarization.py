@@ -77,8 +77,8 @@ def calculate_polarization(left_counts, right_counts):
     return total_pol, left_author_pols, right_author_pols
 
 
-def split_political_orientation(data):
-    return data[data["politics"] == "D"], data[data["politics"] == "R"]
+def split_political_affiliation(data):
+    return data[data["affiliation"] == "D"], data[data["affiliation"] == "R"]
 
 
 def get_author_token_counts(posts, vocab):
@@ -120,7 +120,7 @@ def get_polarization(event, data, default_score=0.5):
     default_score: default token partisanship score
     """
     # get partisan posts
-    left_posts, right_posts = split_political_orientation(data)
+    left_posts, right_posts = split_political_affiliation(data)
 
     # get vocab
     vocab = {w: i for i, w in
@@ -193,14 +193,22 @@ def get_polarization(event, data, default_score=0.5):
 def split_by_day(data):
     return [(v, k) for k, v in data.groupby("time")]
 
+def split_by_week(data):
+    data.time = pd.to_datetime(data['time'])
 
-def get_polarization_by_day(event, data):
-    data_days = split_by_day(data)
+    return [(v, k) for k, v in data.groupby(pd.Grouper(key="time", freq="W"))]
+
+
+def get_polarization_by_time(event, data, freq="day"):
+    if freq == "day":
+        data_time = split_by_day(data)
+    elif freq == "week":
+        data_time = split_by_week(data)
 
     pol = []
-    for d, day in data_days:
+    for d, date in data_time:
         pol_data, _ = get_polarization(event, d)
         pol_val, random_val, author_len = pol_data
-        pol.append((pol_val, random_val, author_len, pd.to_datetime(day)))
+        pol.append((pol_val, random_val, author_len, pd.to_datetime(date)))
 
     return pd.DataFrame(pol, columns=["pol", "random_pol", "author_len", "time"])
