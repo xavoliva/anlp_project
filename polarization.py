@@ -19,7 +19,7 @@ def get_party_q(party_counts, exclude_author=None):
 
 
 def get_rho(left_q, right_q):
-    return (right_q / (left_q + right_q)).transpose()
+    return (left_q / (left_q + right_q)).transpose()
 
 
 def calculate_polarization(left_counts, right_counts):
@@ -43,13 +43,10 @@ def calculate_polarization(left_counts, right_counts):
     left_q = get_party_q(left_counts)
     right_q = get_party_q(right_counts)
 
-    # apply measures via leave-out
-    left_sum = 0
-    right_sum = 0
-
     left_author_pols = []
     right_author_pols = []
 
+    left_sum = 0
     for i in range(nr_left_authors):
         left_leaveout_q = get_party_q(left_counts, i)
         token_scores_left = get_rho(left_leaveout_q, right_q)
@@ -59,6 +56,7 @@ def calculate_polarization(left_counts, right_counts):
 
         left_sum += left_author_pol
 
+    right_sum = 0
     for i in range(nr_right_authors):
         right_leaveout_q = get_party_q(right_counts, i)
         token_scores_right = 1. - get_rho(left_q, right_leaveout_q)
@@ -89,7 +87,7 @@ def get_author_token_counts(posts, vocab):
 
     for author_idx, (author, author_group), in enumerate(authors):
         word_indices = []
-        for post in author_group['post']:
+        for post in author_group['body']:
             count = 0
             prev_w = ''
             for w in post:
@@ -116,7 +114,7 @@ def get_polarization(event, data, default_score=0.5):
     """
     Measure polarization.
     event: name of the event
-    data: dataframe with 'post' and 'author'
+    data: dataframe with 'body' and 'author'
     default_score: default token partisanship score
     """
     # get partisan posts
@@ -132,11 +130,9 @@ def get_polarization(event, data, default_score=0.5):
     left_author_len = left_counts.shape[0]
     right_author_len = right_counts.shape[0]
 
-    author_len = left_author_len + right_author_len
-
     if left_author_len < 10 or right_author_len < 10:
         # return these values when there is not enough data to make predictions on
-        return (default_score, default_score, author_len), ([], [])
+        return (default_score, default_score, left_author_len + right_author_len), ([], [])
 
     # make the prior neutral (i.e. make sure there are the same number of left and right authors)
     left_author_len = left_counts.shape[0]
@@ -183,20 +179,23 @@ def get_polarization(event, data, default_score=0.5):
     RNG.shuffle(index)
     shuffled_all_counts = all_counts[index, :]
 
-    # Calculate polarization with random assignment of users
+    # Calculate polarization with random assignment of authors
     random_val, _, _ = calculate_polarization(shuffled_all_counts[:left_counts.shape[0], :],
                                               shuffled_all_counts[left_counts.shape[0]:, :])
+
+    author_len = left_author_len + right_author_len
 
     return (pol_val, random_val, author_len), (left_pol_vals, right_pol_vals)
 
 
 def split_by_day(data):
-    return [(v, k) for k, v in data.groupby("time")]
+    return [(v, k) for k, v in data.groupby("created_utc")]
+
 
 def split_by_week(data):
-    data.time = pd.to_datetime(data['time'])
+    data.created_utc = pd.to_datetime(data["created_utc"])
 
-    return [(v, k) for k, v in data.groupby(pd.Grouper(key="time", freq="W"))]
+    return [(v, k) for k, v in data.groupby(pd.Grouper(key="created_utc", freq="W"))]
 
 
 def get_polarization_by_time(event, data, freq="day"):
@@ -211,4 +210,4 @@ def get_polarization_by_time(event, data, freq="day"):
         pol_val, random_val, author_len = pol_data
         pol.append((pol_val, random_val, author_len, pd.to_datetime(date)))
 
-    return pd.DataFrame(pol, columns=["pol", "random_pol", "author_len", "time"])
+    return pd.DataFrame(pol, columns=["pol", "random_pol", "author_len", "created_utc"])
