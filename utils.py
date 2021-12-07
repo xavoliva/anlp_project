@@ -103,14 +103,15 @@ def tokenize_post(text, keep_stopwords=False, stemmer=True):
     p_text = process_post(text)
 
     tokens = word_tokenize(p_text)
-    # filter punctuation
-    tokens = filter(lambda token: token not in string.punctuation, tokens)
+    # filter punctuation and digits
+    tokens = filter(lambda token: token not in string.punctuation and not token.isdigit(), tokens)
+
     if not keep_stopwords:
         # filter stopwords
         tokens = [t for t in tokens if t not in STOPWORDS]
     # stem words
     if stemmer:
-        tokens = [sno.stem(t.lower()) for t in tokens]
+        tokens = [sno.stem(t) for t in tokens]
 
     return tokens
 
