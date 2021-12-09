@@ -27,6 +27,25 @@ DEM_SUBREDDITS = set([
     "DemocraticSocialism",
     "socialism",
     "Socialism_101",
+    "AntiTrumpAlliance",
+    "BernieSanders",
+    "DemocraticSocialism",
+    "ENLIGHTENEDCENTRISM",
+    "ShitLiberalsSay",
+    "Socialism_101",
+    "antifa",
+    "chomsky",
+    "occupywallstreet",
+    "progressive",
+    "rojava",
+    "AntiTrumpAlliance",
+    "FULLCOMMUNISM",
+    "GreenAndPleasant",
+    "HillaryForAmerica",
+    "IWW",
+    "Impeach_Trump",
+    "Sino",
+    "TrumpForPrison"
 ])
 
 REP_SUBREDDITS = set([
@@ -42,7 +61,17 @@ REP_SUBREDDITS = set([
     "progun",
     "antifapassdenied",
     "Capitalism",
-    "Libertarian"
+    "Libertarian",
+    "BernieSandersSucks",
+    "Identitarians",
+    "NationalSocialism",
+    "monarchism",
+    "neoliberal",
+    "pol",
+    "AltRightChristian",
+    "HillaryForPrison",
+    "JordanPeterson",
+    "altright"
 ])
 
 PARTISAN_SUBREDDITS = DEM_SUBREDDITS | REP_SUBREDDITS
