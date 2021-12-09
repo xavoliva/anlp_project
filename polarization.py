@@ -5,6 +5,7 @@ import pandas as pd
 import scipy.sparse as sp
 
 from constants import EVENTS_DIR, RNG
+from utils import tokenize_post
 
 
 def get_party_q(party_counts, exclude_author=None):
@@ -84,13 +85,12 @@ def get_author_token_counts(posts, vocab):
     row_idx = []
     col_idx = []
     data = []
-
     for author_idx, (author, author_group), in enumerate(authors):
         word_indices = []
         for post in author_group['body']:
             count = 0
             prev_w = ''
-            for w in post:
+            for w in tokenize_post(post, stemmer=False, keep_stopwords=False):
                 if w == '':
                     continue
                 if w in vocab:
