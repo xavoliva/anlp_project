@@ -1,5 +1,7 @@
 import random
 
+import pandas as pd
+
 RNG = random.Random()
 RNG.seed(42)
 
@@ -10,6 +12,15 @@ OUTPUT_DIR = f"{DATA_DIR}/output"
 FIGURES_DIR = f"{DATA_DIR}/figures"
 
 EVENTS = ["brexit", "us_election"]
+
+EVENTS_INFO = {
+    "brexit": {
+        "name": "Brexit referendum",
+        "date":  pd.to_datetime("06-23-2016")},
+    "us_election": {
+        "name": "US presidential election",
+        "date": pd.to_datetime("11-08-2016")}
+}
 
 ALL_COLUMNS = ['archived', 'author', 'author_flair_css_class', 'author_flair_text', 'body', 'controversiality',
                'created_utc', 'distinguished', 'downs', 'edited', 'gilded', 'id', 'link_id', 'name', 'parent_id',
