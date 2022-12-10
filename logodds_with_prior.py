@@ -29,6 +29,7 @@ def logodds_with_prior(one_tokens, two_tokens, display=25, priors=None):
         d_hat = math.log((y_one[w] + alpha_w) / (n_one + alpha_0 - y_one[w] - alpha_w)) - \
             math.log((y_two[w] + alpha_w) /
                      (n_two + alpha_0 - y_two[w] - alpha_w))
+
         sigma_squared = 1 / (y_one[w] + alpha_w) + 1 / (y_two[w] + alpha_w)
 
         xi[w] = d_hat / math.sqrt(sigma_squared)
@@ -42,7 +43,7 @@ def get_priors(tokens):
     freqs = {}
     total = len(tokens)
 
-    for w in counts:
-        freqs[w] = counts[w] / total
+    for word in counts:
+        freqs[word] = counts[word] / total
 
     return freqs

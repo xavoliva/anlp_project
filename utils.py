@@ -5,6 +5,7 @@ import time
 
 import nltk
 from nltk.tokenize import word_tokenize
+
 # import pandas as pd
 import dask.dataframe as dd
 import pandas as pd
@@ -36,12 +37,14 @@ def get_files_from_folder(folder_name, compression="bz2"):
 
 
 def load_event(event):
-    return pd.read_csv(f"{EVENTS_DIR}/{event}.csv", usecols=["author", "body", "created_utc", "affiliation"])
+    return pd.read_csv(
+        f"{EVENTS_DIR}/{event}.csv",
+        usecols=["author", "body", "created_utc", "affiliation"],
+    )
 
 
 def load_data(data_path, year, months=None, tokenize=False, comp="bz2", dev=False):
-    files = get_files_from_folder(
-        f"{data_path}/{year}", compression=comp)
+    files = get_files_from_folder(f"{data_path}/{year}", compression=comp)
 
     if months:
         files = [f for f in files if int(f[-10:-8]) in months]
@@ -52,23 +55,22 @@ def load_data(data_path, year, months=None, tokenize=False, comp="bz2", dev=Fals
         files = files[:1]
 
     if comp == "bz2":
-        data = dd.read_csv(files,
-                           blocksize=None,  # 500e6 = 500MB
-                           usecols=COLUMNS,
-                           dtype={
-                               "subreddit": "string",
-                               "author": "string",
-                               "body": "string",
-                           })
+        data = dd.read_csv(
+            files,
+            blocksize=None,  # 500e6 = 500MB
+            usecols=COLUMNS,
+            dtype={
+                "subreddit": "string",
+                "author": "string",
+                "body": "string",
+            },
+        )
 
         # keep only day
-        data["created_utc"] = dd.to_datetime(
-            data["created_utc"], unit="s").dt.date
+        data["created_utc"] = dd.to_datetime(data["created_utc"], unit="s").dt.date
 
     elif comp == "parquet":
-        data = dd.read_parquet(files,
-                               engine="pyarrow",
-                               gather_statistics=True)
+        data = dd.read_parquet(files, engine="pyarrow", gather_statistics=True)
     else:
         raise NotImplementedError("Compression not allowed.")
 
@@ -77,7 +79,8 @@ def load_data(data_path, year, months=None, tokenize=False, comp="bz2", dev=Fals
 
         tic = time.perf_counter()
         data["tokens"] = data["body"].apply(
-            lambda x: tokenize_post(x, STOPWORDS, stemmer=True))
+            lambda x: tokenize_post(x, STOPWORDS, stemmer=True)
+        )
         toc = time.perf_counter()
 
         print(f"\tTokenized dataframe in {toc - tic:0.4f} seconds")
@@ -104,7 +107,9 @@ def tokenize_post(text, keep_stopwords=False, stemmer=True):
 
     tokens = word_tokenize(p_text)
     # filter punctuation and digits
-    tokens = filter(lambda token: token not in string.punctuation and not token.isdigit(), tokens)
+    tokens = filter(
+        lambda token: token not in string.punctuation and not token.isdigit(), tokens
+    )
 
     if not keep_stopwords:
         # filter stopwords
@@ -122,4 +127,4 @@ sia = SentimentIntensityAnalyzer()
 
 def get_sentiment_score(post):
     post = process_post(post)
-    return sia.polarity_scores(post)['compound']
+    return sia.polarity_scores(post)["compound"]

@@ -205,8 +205,8 @@ def get_polarization_by_time(event, data, freq="day"):
         data_time = split_by_week(data)
 
     pol = []
-    for d, date in data_time:
-        pol_data, _ = get_polarization(event, d)
+    for date_data, date in data_time:
+        pol_data, _ = get_polarization(event, date_data)
         pol_val, random_val, author_len = pol_data
         pol.append((pol_val, random_val, author_len, pd.to_datetime(date)))
 

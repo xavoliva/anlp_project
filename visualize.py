@@ -18,8 +18,9 @@ def barplot_top(df, column, year, n=10):
     ax.set_xlabel(column)
     plt.savefig(
         fname=f"{FIGURES_DIR}/barplot_top_{column}_{year}.pdf",
-        bbox_inches='tight', pad_inches=0,
-        format="pdf"
+        bbox_inches="tight",
+        pad_inches=0,
+        format="pdf",
     )
     plt.show()
 
@@ -34,8 +35,9 @@ def plot_daily_comments(df, year):
     ax.set_xlabel("Date")
     plt.savefig(
         fname=f"{FIGURES_DIR}/plot_daily_comments_{year}.pdf",
-        bbox_inches='tight', pad_inches=0,
-        format="pdf"
+        bbox_inches="tight",
+        pad_inches=0,
+        format="pdf",
     )
 
     plt.show()
@@ -43,9 +45,12 @@ def plot_daily_comments(df, year):
 
 def plot_daily_sentiment(df, year):
     df["sentiment"] = df.body.apply(get_sentiment_score, meta=("body", "float"))
-    df_d = df[["created_utc", "sentiment"]].groupby(
-        by="created_utc")["sentiment"].mean().compute()
-
+    df_d = (
+        df[["created_utc", "sentiment"]]
+        .groupby(by="created_utc")["sentiment"]
+        .mean()
+        .compute()
+    )
 
     ax = sns.lineplot(x=df_d.index, y=df_d.values)
 
@@ -54,8 +59,9 @@ def plot_daily_sentiment(df, year):
     ax.set_xlabel("Date")
     plt.savefig(
         fname=f"{FIGURES_DIR}/plot_daily_sentiment_{year}.pdf",
-        bbox_inches='tight', pad_inches=0,
-        format="pdf"
+        bbox_inches="tight",
+        pad_inches=0,
+        format="pdf",
     )
 
     plt.show()
